@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: npercent-runlog
+    runtime: node
+    plan: free
+    buildCommand: npm install --include=dev && npx prisma generate --schema=prisma/hosted.prisma && npm run build
+    startCommand: npx prisma db push --schema=prisma/hosted.prisma --skip-generate && npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 22.16.0
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_PASSWORD
+        generateValue: true

@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+model User {
+  id String @id @default(cuid())
+  handle String @unique
+  pinHash String
+  runs RunRecord[]
+  sessions Session[]
+}
+model Season {
+  number Int @id
+  start String @unique
+  end String
+  runs RunRecord[]
+}
+model RunRecord {
+  id String @id @default(cuid())
+  userId String
+  seasonNumber Int
+  day String
+  metres Int
+  distanceBucket Int
+  seconds Int
+  user User @relation(fields: [userId], references: [id])
+  season Season @relation(fields: [seasonNumber], references: [number])
+  @@unique([userId, day, distanceBucket])
+  @@index([seasonNumber, day])
+}
+model Session {
+  digest String @id
+  userId String?
+  admin Boolean @default(false)
+  expires DateTime
+  user User? @relation(fields: [userId], references: [id])
+}
